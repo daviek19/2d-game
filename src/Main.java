@@ -1,3 +1,5 @@
+import main.GamePanel;
+
 import javax.swing.*;
 
 public class Main {
@@ -18,6 +20,5 @@ public class Main {
         window.setVisible(true);
 
         gamePanel.startGame();
-
     }
 }
