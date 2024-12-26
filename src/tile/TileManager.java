@@ -20,10 +20,10 @@ public class TileManager {
     public TileManager(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         tiles = new Tile[10];
-        mapTileNum = new int[gamePanel.maxScreenCol][gamePanel.maxScreenRow]; //[16][12]
+        mapTileNum = new int[gamePanel.maxWorldCol][gamePanel.maxWorldRow]; //[50][50]
 
         getTileImage();
-        loadMap("/maps/maps_01.txt");
+        loadMap("/maps/world_01.txt");
     }
 
     private void getTileImage() {
@@ -38,6 +38,15 @@ public class TileManager {
             tiles[2] = new Tile();
             tiles[2].image = ImageIO.read(getClass().getResourceAsStream("/tiles/water.png"));
 
+            tiles[3] = new Tile();
+            tiles[3].image = ImageIO.read(getClass().getResourceAsStream("/tiles/earth.png"));
+
+            tiles[4] = new Tile();
+            tiles[4].image = ImageIO.read(getClass().getResourceAsStream("/tiles/tree.png"));
+
+            tiles[5] = new Tile();
+            tiles[5].image = ImageIO.read(getClass().getResourceAsStream("/tiles/sand.png"));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,42 +54,53 @@ public class TileManager {
     }
 
     public void draw(Graphics2D graphics2D) {
-        int col = 0;
-        int row = 0;
+        int worldCol = 0;
+        int worldRow = 0;
 
-        int x = 0;
-        int y = 0;
+        while (worldCol < gamePanel.maxWorldCol && worldRow < gamePanel.maxWorldRow) {
 
-        while (col < gamePanel.maxScreenCol && row < gamePanel.maxScreenRow) {
+            int tileNum = mapTileNum[worldCol][worldRow];
 
-            int tileNum = mapTileNum[col][row];
+            int worldX = worldCol * gamePanel.tileSize;
+            int worldY = worldRow * gamePanel.tileSize;
 
-            graphics2D.drawImage(tiles[tileNum].image, x, y, gamePanel.tileSize, gamePanel.tileSize, null);
+            //world -(camera + viewport)
+            int screenX = worldX - gamePanel.player.worldX + gamePanel.player.screenX;
+            int screenY = worldY - gamePanel.player.worldY + gamePanel.player.screenY;
 
-            col++;
-            x += gamePanel.tileSize;
+            //optimize the world around view port
+            if (worldX + gamePanel.tileSize > gamePanel.player.worldX - gamePanel.player.screenX &&
+                    worldX - gamePanel.tileSize < gamePanel.player.worldX + gamePanel.player.screenX &&
+                    worldY + gamePanel.tileSize > gamePanel.player.worldY - gamePanel.player.screenY &&
+                    worldY - gamePanel.tileSize < gamePanel.player.worldY + gamePanel.player.screenY
+            ) {
+                graphics2D.drawImage(tiles[tileNum].image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
+            }
 
-            if (col == gamePanel.maxScreenCol) {
-                x = 0;
-                y += gamePanel.tileSize;
-                col = 0;
-                row++;
+            worldCol++;
+
+            if (worldCol == gamePanel.maxWorldCol) {
+                worldCol = 0;
+                worldRow++;
             }
 
         }
     }
 
     public void loadMap(String mapURI) {
-        try (InputStream inputStream = getClass().getResourceAsStream(mapURI); BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
+        try (
+                InputStream inputStream = getClass().getResourceAsStream(mapURI);
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        ) {
 
-            for (int row = 0; row < gamePanel.maxScreenRow; row++) {
+            for (int row = 0; row < gamePanel.maxWorldCol; row++) {
                 String line = bufferedReader.readLine();
 
-                if (line == null || line.length() < gamePanel.maxScreenCol) {
+                if (line == null || line.length() < gamePanel.maxWorldCol) {
                     throw new IOException("Invalid map file: insufficient rows or columns");
                 }
 
-                for (int col = 0; col < gamePanel.maxScreenCol; col++) {
+                for (int col = 0; col < gamePanel.maxWorldCol; col++) {
                     // Convert character to integer
                     int num = Character.getNumericValue(line.charAt(col));
 

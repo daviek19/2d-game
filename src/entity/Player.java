@@ -13,18 +13,26 @@ public class Player extends Entity {
     KeyHandler kh;
     GamePanel gamePanel;
 
+    public final int screenX;
+    public final int screenY;
+
     public Player(KeyHandler keyHandler, GamePanel gamePanel) {
         this.kh = keyHandler;
         this.gamePanel = gamePanel;
+
+        screenX = (gamePanel.screenWidth / 2) - (gamePanel.tileSize / 2);
+        screenY = (gamePanel.screenHeight / 2) - (gamePanel.tileSize / 2);
 
         setDefaults();
         getPlayerImage();
     }
 
     public void setDefaults() {
-        x = 100;
-        y = 100;
-        speed = 4; //4px
+        //set a starting point in the game for the player
+        worldX = gamePanel.tileSize * 23;
+        worldY = gamePanel.tileSize * 21;
+
+        speed = 4;
         direction = "down";
     }
 
@@ -54,16 +62,16 @@ public class Player extends Entity {
 
             if (kh.upPressed == true) {
                 direction = "up";
-                y -= speed;
+                worldY -= speed;
             } else if (kh.downPressed == true) {
                 direction = "down";
-                y += speed;
+                worldY += speed;
             } else if (kh.leftPressed == true) {
                 direction = "left";
-                x -= speed;
+                worldX -= speed;
             } else if (kh.rightPressed == true) {
                 direction = "right";
-                x += speed;
+                worldX += speed;
             }
 
             spriteCounter++;
@@ -123,7 +131,7 @@ public class Player extends Entity {
                 break;
         }
 
-        graphics2D.drawImage(image, x, y, gamePanel.tileSize, gamePanel.tileSize, null);
+        graphics2D.drawImage(image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
     }
 
 

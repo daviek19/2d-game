@@ -10,15 +10,26 @@ public class GamePanel extends JPanel implements Runnable {
 
     final int originalTileSize = 16; //16X16 single tile at design
     final int scale = 3;
-    public final int tileSize = originalTileSize * scale; //render 48*48 tile
-    public final int maxScreenCol = 16;
-    public final int maxScreenRow = 12;
-    final int screenWidth = tileSize * maxScreenCol; //width 48*16 = 768
-    final int screenHeight = tileSize * maxScreenRow; //height 48*12 = 576
     final static int FPS = 60;
 
+    public final int tileSize = originalTileSize * scale; //render 48*48 tile
+
+    //viewport/camera settings
+    public final int maxScreenCol = 16;
+    public final int maxScreenRow = 12;
+    public final int screenWidth = tileSize * maxScreenCol; //width 48*16 = 768
+    public final int screenHeight = tileSize * maxScreenRow; //height 48*12 = 576
+
+    //world settings
+    public final int maxWorldCol = 49;
+    public final int maxWorldRow = 49;
+
+    public final int worldWidth = tileSize * maxWorldCol;
+    public final int worldHeight = tileSize * maxWorldRow;
+
+
     KeyHandler kh = new KeyHandler();
-    Player player = new Player(kh, this);
+    public Player player = new Player(kh, this);
     TileManager tileManager = new TileManager(this);
     Thread gameThread;
 
