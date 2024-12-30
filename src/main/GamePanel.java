@@ -8,30 +8,32 @@ import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable {
 
-    final int originalTileSize = 16; //16X16 single tile at design
-    final int scale = 3;
+    final int ORIGINAL_TILE_SIZE = 16; //16X16 single tile at design
+    final int SCALE = 3;
     final static int FPS = 60;
 
-    public final int tileSize = originalTileSize * scale; //render 48*48 tile
+    public final int TILE_SIZE = ORIGINAL_TILE_SIZE * SCALE; //render 48*48 tile
 
     //viewport/camera settings
     public final int maxScreenCol = 16;
     public final int maxScreenRow = 12;
-    public final int screenWidth = tileSize * maxScreenCol; //width 48*16 = 768
-    public final int screenHeight = tileSize * maxScreenRow; //height 48*12 = 576
+    public final int screenWidth = TILE_SIZE * maxScreenCol; //width 48*16 = 768
+    public final int screenHeight = TILE_SIZE * maxScreenRow; //height 48*12 = 576
 
     //world settings
     public final int maxWorldCol = 49;
     public final int maxWorldRow = 49;
 
-    public final int worldWidth = tileSize * maxWorldCol;
-    public final int worldHeight = tileSize * maxWorldRow;
+    public final int worldWidth = TILE_SIZE * maxWorldCol;
+    public final int worldHeight = TILE_SIZE * maxWorldRow;
 
 
     KeyHandler kh = new KeyHandler();
     public Player player = new Player(kh, this);
     TileManager tileManager = new TileManager(this);
     Thread gameThread;
+
+    public CollisionChecker collisionChecker = new CollisionChecker(this);
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));

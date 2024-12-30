@@ -20,8 +20,10 @@ public class Player extends Entity {
         this.kh = keyHandler;
         this.gamePanel = gamePanel;
 
-        screenX = (gamePanel.screenWidth / 2) - (gamePanel.tileSize / 2);
-        screenY = (gamePanel.screenHeight / 2) - (gamePanel.tileSize / 2);
+        screenX = (gamePanel.screenWidth / 2) - (gamePanel.TILE_SIZE / 2);
+        screenY = (gamePanel.screenHeight / 2) - (gamePanel.TILE_SIZE / 2);
+
+        solidArea = new Rectangle(8, 16, 32, 32);
 
         setDefaults();
         getPlayerImage();
@@ -29,8 +31,8 @@ public class Player extends Entity {
 
     public void setDefaults() {
         //set a starting point in the game for the player
-        worldX = gamePanel.tileSize * 23;
-        worldY = gamePanel.tileSize * 21;
+        worldX = gamePanel.TILE_SIZE * 23;
+        worldY = gamePanel.TILE_SIZE * 21;
 
         speed = 4;
         direction = "down";
@@ -62,16 +64,31 @@ public class Player extends Entity {
 
             if (kh.upPressed == true) {
                 direction = "up";
-                worldY -= speed;
             } else if (kh.downPressed == true) {
                 direction = "down";
-                worldY += speed;
             } else if (kh.leftPressed == true) {
                 direction = "left";
-                worldX -= speed;
             } else if (kh.rightPressed == true) {
                 direction = "right";
-                worldX += speed;
+            }
+
+            collisionOn = false;
+            gamePanel.collisionChecker.checkTile(this);
+            if (collisionOn == false) {
+                switch (direction) {
+                    case "up":
+                        worldY -= speed;
+                        break;
+                    case "down":
+                        worldY += speed;
+                        break;
+                    case "left":
+                        worldX -= speed;
+                        break;
+                    case "right":
+                        worldX += speed;
+                        break;
+                }
             }
 
             spriteCounter++;
@@ -131,7 +148,7 @@ public class Player extends Entity {
                 break;
         }
 
-        graphics2D.drawImage(image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
+        graphics2D.drawImage(image, screenX, screenY, gamePanel.TILE_SIZE, gamePanel.TILE_SIZE, null);
     }
 
 

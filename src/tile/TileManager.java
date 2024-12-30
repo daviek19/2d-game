@@ -13,9 +13,9 @@ public class TileManager {
 
     GamePanel gamePanel;
 
-    Tile[] tiles;
+    public Tile[] tiles;
 
-    int mapTileNum[][];
+    public int mapTileNum[][];
 
     public TileManager(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -34,15 +34,18 @@ public class TileManager {
 
             tiles[1] = new Tile();
             tiles[1].image = ImageIO.read(getClass().getResourceAsStream("/tiles/wall.png"));
+            tiles[1].collision = true;
 
             tiles[2] = new Tile();
             tiles[2].image = ImageIO.read(getClass().getResourceAsStream("/tiles/water.png"));
+            tiles[2].collision = true;
 
             tiles[3] = new Tile();
             tiles[3].image = ImageIO.read(getClass().getResourceAsStream("/tiles/earth.png"));
 
             tiles[4] = new Tile();
             tiles[4].image = ImageIO.read(getClass().getResourceAsStream("/tiles/tree.png"));
+            tiles[4].collision = true;
 
             tiles[5] = new Tile();
             tiles[5].image = ImageIO.read(getClass().getResourceAsStream("/tiles/sand.png"));
@@ -61,20 +64,20 @@ public class TileManager {
 
             int tileNum = mapTileNum[worldCol][worldRow];
 
-            int worldX = worldCol * gamePanel.tileSize;
-            int worldY = worldRow * gamePanel.tileSize;
+            int worldX = worldCol * gamePanel.TILE_SIZE;
+            int worldY = worldRow * gamePanel.TILE_SIZE;
 
-            //world -(camera + viewport)
+            //world -camera + viewport
             int screenX = worldX - gamePanel.player.worldX + gamePanel.player.screenX;
             int screenY = worldY - gamePanel.player.worldY + gamePanel.player.screenY;
 
             //optimize the world around view port
-            if (worldX + gamePanel.tileSize > gamePanel.player.worldX - gamePanel.player.screenX &&
-                    worldX - gamePanel.tileSize < gamePanel.player.worldX + gamePanel.player.screenX &&
-                    worldY + gamePanel.tileSize > gamePanel.player.worldY - gamePanel.player.screenY &&
-                    worldY - gamePanel.tileSize < gamePanel.player.worldY + gamePanel.player.screenY
+            if (worldX + gamePanel.TILE_SIZE > gamePanel.player.worldX - gamePanel.player.screenX &&
+                    worldX - gamePanel.TILE_SIZE < gamePanel.player.worldX + gamePanel.player.screenX &&
+                    worldY + gamePanel.TILE_SIZE > gamePanel.player.worldY - gamePanel.player.screenY &&
+                    worldY - gamePanel.TILE_SIZE < gamePanel.player.worldY + gamePanel.player.screenY
             ) {
-                graphics2D.drawImage(tiles[tileNum].image, screenX, screenY, gamePanel.tileSize, gamePanel.tileSize, null);
+                graphics2D.drawImage(tiles[tileNum].image, screenX, screenY, gamePanel.TILE_SIZE, gamePanel.TILE_SIZE, null);
             }
 
             worldCol++;
