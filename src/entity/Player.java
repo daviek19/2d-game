@@ -25,7 +25,7 @@ public class Player extends Entity {
         screenX = (gamePanel.screenWidth / 2) - (gamePanel.TILE_SIZE / 2);
         screenY = (gamePanel.screenHeight / 2) - (gamePanel.TILE_SIZE / 2);
 
-        solidArea = new Rectangle(8, 16, 32, 32);
+        solidArea = new Rectangle(8, 16, 16, 16);
 
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
@@ -123,20 +123,28 @@ public class Player extends Entity {
                     keyCount++;
                     gamePanel.playSoundEffect(1);
                     gamePanel.gameObjects[gameObjectIndex] = null;
-                    System.out.println("Key Count = " + keyCount);
+                    gamePanel.onScreenUi.showMessage("You got a key!");
                     break;
                 case "Door":
                     if (keyCount > 0) {
                         gamePanel.playSoundEffect(3);
                         gamePanel.gameObjects[gameObjectIndex] = null;
                         keyCount--;
+                        gamePanel.onScreenUi.showMessage("You opened a door!");
+                    } else {
+                        gamePanel.onScreenUi.showMessage("You need a key!");
                     }
-                    System.out.println("Key Count = " + keyCount);
                     break;
                 case "Boots":
                     speed += 2;
                     gamePanel.playSoundEffect(2);
                     gamePanel.gameObjects[gameObjectIndex] = null;
+                    gamePanel.onScreenUi.showMessage("Speed up!");
+                    break;
+                case "Chest":
+                    gamePanel.onScreenUi.isGameFinished = true;
+                    gamePanel.stopMusic();
+                    gamePanel.playSoundEffect(4);
                     break;
             }
         }

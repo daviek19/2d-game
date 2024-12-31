@@ -25,6 +25,9 @@ public class GamePanel extends JPanel implements Runnable {
     public final int maxWorldCol = 49;
     public final int maxWorldRow = 49;
 
+    //sound setting
+    public final boolean GAME_SOUND_ON = true;
+
     public final int worldWidth = TILE_SIZE * maxWorldCol;
     public final int worldHeight = TILE_SIZE * maxWorldRow;
 
@@ -36,7 +39,7 @@ public class GamePanel extends JPanel implements Runnable {
     TileManager tileManager = new TileManager(this);
     Sound gameMusic = new Sound();
     Sound gameSoundEffects = new Sound();
-
+    public OnScreenUi onScreenUi = new OnScreenUi(this);
     Thread gameThread;
 
     public CollisionChecker collisionChecker = new CollisionChecker(this);
@@ -67,8 +70,11 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void playMusic(int musicFileIndex) {
         gameMusic.setFile(musicFileIndex);
-        gameMusic.play();
-        gameMusic.loop();
+
+        if (GAME_SOUND_ON) {
+            gameMusic.play();
+            gameMusic.loop();
+        }
     }
 
     public void stopMusic() {
@@ -83,22 +89,25 @@ public class GamePanel extends JPanel implements Runnable {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
+        Graphics2D graphics2D = (Graphics2D) g;
 
         //tiles
-        tileManager.draw(g2d);
+        tileManager.draw(graphics2D);
 
         //game objects
         for (int i = 0; i < gameObjects.length; i++) {
             if (gameObjects[i] != null) {
-                gameObjects[i].draw(g2d, this);
+                gameObjects[i].draw(graphics2D, this);
             }
         }
 
         //player
-        player.draw(g2d);
+        player.draw(graphics2D);
 
-        g2d.dispose();
+        //draw the game ui
+        onScreenUi.draw(graphics2D);
+
+        graphics2D.dispose();
     }
 
     @Override
