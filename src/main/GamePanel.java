@@ -1,6 +1,7 @@
 package main;
 
 import entity.Player;
+import game_object.GameObject;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -27,13 +28,19 @@ public class GamePanel extends JPanel implements Runnable {
     public final int worldWidth = TILE_SIZE * maxWorldCol;
     public final int worldHeight = TILE_SIZE * maxWorldRow;
 
+    public GameObject[] gameObjects = new GameObject[10];
+
 
     KeyHandler kh = new KeyHandler();
     public Player player = new Player(kh, this);
     TileManager tileManager = new TileManager(this);
+    Sound gameMusic = new Sound();
+    Sound gameSoundEffects = new Sound();
+
     Thread gameThread;
 
     public CollisionChecker collisionChecker = new CollisionChecker(this);
+    public AssetSetter assetSetter = new AssetSetter(this);
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -42,7 +49,11 @@ public class GamePanel extends JPanel implements Runnable {
 
         this.addKeyListener(kh);
         this.setFocusable(true);
+    }
 
+    public void setupGame() {
+        assetSetter.setDefaultGameObject();
+        playMusic(0);
     }
 
     public void startGame() {
@@ -54,12 +65,37 @@ public class GamePanel extends JPanel implements Runnable {
         player.update();
     }
 
+    public void playMusic(int musicFileIndex) {
+        gameMusic.setFile(musicFileIndex);
+        gameMusic.play();
+        gameMusic.loop();
+    }
+
+    public void stopMusic() {
+        gameMusic.stop();
+    }
+
+    public void playSoundEffect(int soundFileIndex) {
+        gameSoundEffects.setFile(soundFileIndex);
+        gameSoundEffects.play();
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
+        //tiles
         tileManager.draw(g2d);
+
+        //game objects
+        for (int i = 0; i < gameObjects.length; i++) {
+            if (gameObjects[i] != null) {
+                gameObjects[i].draw(g2d, this);
+            }
+        }
+
+        //player
         player.draw(g2d);
 
         g2d.dispose();

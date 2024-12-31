@@ -16,6 +16,8 @@ public class Player extends Entity {
     public final int screenX;
     public final int screenY;
 
+    public int keyCount = 0;
+
     public Player(KeyHandler keyHandler, GamePanel gamePanel) {
         this.kh = keyHandler;
         this.gamePanel = gamePanel;
@@ -24,6 +26,9 @@ public class Player extends Entity {
         screenY = (gamePanel.screenHeight / 2) - (gamePanel.TILE_SIZE / 2);
 
         solidArea = new Rectangle(8, 16, 32, 32);
+
+        solidAreaDefaultX = solidArea.x;
+        solidAreaDefaultY = solidArea.y;
 
         setDefaults();
         getPlayerImage();
@@ -74,6 +79,12 @@ public class Player extends Entity {
 
             collisionOn = false;
             gamePanel.collisionChecker.checkTile(this);
+
+            //check objects collision
+            int gameObjectIndex = gamePanel.collisionChecker.checkGameObject(this, true);
+            pickupObject(gameObjectIndex);
+
+
             if (collisionOn == false) {
                 switch (direction) {
                     case "up":
@@ -99,6 +110,34 @@ public class Player extends Entity {
                     spriteNum = 1;
                 }
                 spriteCounter = 0;
+            }
+        }
+    }
+
+    public void pickupObject(int gameObjectIndex) {
+        if (gameObjectIndex != 999) {
+            String objectName = gamePanel.gameObjects[gameObjectIndex].name;
+
+            switch (objectName) {
+                case "Key":
+                    keyCount++;
+                    gamePanel.playSoundEffect(1);
+                    gamePanel.gameObjects[gameObjectIndex] = null;
+                    System.out.println("Key Count = " + keyCount);
+                    break;
+                case "Door":
+                    if (keyCount > 0) {
+                        gamePanel.playSoundEffect(3);
+                        gamePanel.gameObjects[gameObjectIndex] = null;
+                        keyCount--;
+                    }
+                    System.out.println("Key Count = " + keyCount);
+                    break;
+                case "Boots":
+                    speed += 2;
+                    gamePanel.playSoundEffect(2);
+                    gamePanel.gameObjects[gameObjectIndex] = null;
+                    break;
             }
         }
     }
